@@ -1,7 +1,62 @@
+import axios from "axios";
+import {useState,useEffect} from "react";
+import {useParams} from "react-router-dom";
+import BackButton from "../components/BackButton.jsx";
+import Spinner from "../components/Spinner.jsx";
+
 const ShowBook = () => {
+
+    const [loading, setLoading] = useState(false)
+    const [book, setBook] = useState({})
+    const {id} = useParams()
+
+    useEffect(()=>{
+        setLoading(true)
+        axios.get(`http://localhost:5555/books/${id}`)
+            .then(response=>{
+                setBook(response.data)
+                setLoading(false)
+            }).catch((error) => {
+            console.log(error)
+            setLoading(false)
+        })
+
+    },[])
+
+
     return (
-        <div>
-            <div className="">ShowBook</div>
+        <div className="p-4">
+            <BackButton/>
+            <h1 className="text-3xl my-4">Show book</h1>
+            {loading ? (
+                <Spinner/>
+            ):(
+                <div className="flex p-4 flex-col border-2 border-sky-500 rounded-xl w-fit p -4">
+                    <div className="my-4">
+                        <span className="mr-4 text-xl text-gray-500">id</span>
+                        <span className="">{book._id}</span>
+                    </div> <div className="my-4">
+                        <span className="mr-4 text-xl text-gray-500">title</span>
+                        <span className="">{book.title}</span>
+                    </div>
+                    <div className="my-4">
+                        <span className="mr-4 text-xl text-gray-500">author</span>
+                        <span className="">{book.author}</span>
+                    </div>
+                    <div className="my-4">
+                        <span className="mr-4 text-xl text-gray-500">publish year</span>
+                        <span className="">{book.publishYear}</span>
+                    </div>
+                    <div className="my-4">
+                        <span className="mr-4 text-xl text-gray-500">create time</span>
+                        <span className="">{new Date(book.createdAt).toString()}</span>
+                    </div>  <div className="my-4">
+                        <span className="mr-4 text-xl text-gray-500">create time</span>
+                        <span className="">{new Date(book.updatedAt).toString()}</span>
+                    </div>
+                </div>
+
+            )}
         </div>
     )
 }
